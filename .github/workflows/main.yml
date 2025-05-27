@@ -1,0 +1,35 @@
+name: Build C# App
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build project
+      run: dotnet build --configuration Release
+
+    - name: Package output
+      run: |
+        mkdir output
+        cp .\bin\Release\net6.0-windows\*.exe output\
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: PersianBirthdayReminder-EXE
+        path: output/
